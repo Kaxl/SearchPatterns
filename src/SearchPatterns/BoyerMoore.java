@@ -1,4 +1,4 @@
-package SearchPattterns;
+package SearchPatterns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
