@@ -11,6 +11,10 @@ import java.io.IOException;
  *
  *  Even if it's not the cleaner solution, I think it's better to create a static method
  *  that load a file into a string than having the same code x times.
+ *
+ * @author  Axel Fahy
+ * @date    29.03.2015
+ * @version 0.1
  */
 public class Reader {
 
