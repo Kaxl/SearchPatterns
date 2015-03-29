@@ -1,9 +1,7 @@
 package SearchPatterns;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import Utilities.Reader;
+
 import java.util.ArrayList;
 
 /**
@@ -103,24 +101,7 @@ public class KMP {
         this.loadPattern(pattern);
 
         // Load the file into a StringBuffer.
-        StringBuilder text = new StringBuilder();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            String line = br.readLine();
-
-            while (line != null) {
-                text.append(line);
-                text.append("\n");
-                line = br.readLine();
-            }
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("File not found.");
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        StringBuffer text = Reader.read(filename);
 
         int j = 0;
         // We don't need to look for the last characters (when there is less characters left than the size of the pattern).
