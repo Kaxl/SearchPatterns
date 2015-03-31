@@ -107,59 +107,118 @@ public class BoyerMoore {
     /**
      * Generate the second array following the pattern (as you can read in the description above)
      */
-    public void generateSuffixTable () {
+    public void generateSuffixTable() {
+        /**
+         * we start at 1 to not begin the last character at pattern.length, the position of the last character is
+         * pattern.length - 1
+         */
         int i = 1;
 
         String currentSuffix;
         char notChar;
         int decalage = 0;
 
+        /**
+         * we have to manage the case where we are on the first character, the character at index 0 (p.length - i)
+         */
         while (i <= pattern.length()) {
+
+            /**
+             * we take the suffix that we are managing, depending on i, we begin with one character for the suffix,
+             * and add one character at each i loop
+             */
             currentSuffix = pattern.substring(pattern.length() - i, pattern.length());
-            if (pattern.length()-i == 0)
+
+            /**
+             * if the p.length and i have the same values, the program is going to try to look on the notChar at
+             * the position -1 of the pattern, which is going to end with an exception outOfBounds
+             */
+            if (pattern.length() - i == 0)
+
+            /**
+             * in this case, we give a value null to the character to make sure that the program won't find
+             * the same character in the pattern
+             */
                 notChar = 0;
             else
-                notChar = pattern.charAt(pattern.length()-i-1);
+                notChar = pattern.charAt(pattern.length() - i - 1);
 
+            /**
+             * We shift through the pattern
+             */
             for (int j = 1; j < pattern.length(); j++) {
-                if (pattern.length()-i-j-1 < 0) {
+
+                /**
+                 * If we are going to leave the String (by going into negatives index), we add a "decalage"
+                 * which is a shift to avoid the exceptions out of bounds.
+                 */
+                if (pattern.length() - i - j - 1 < 0) {
                     currentSuffix = currentSuffix.substring(1, currentSuffix.length());
                     decalage++;
 
+                    /**
+                     * For the case where the suffix has a null length, we keep the last notChar
+                     */
                     if (currentSuffix.length() > 0)
                         notChar = currentSuffix.charAt(0);
                 }
-                /*
 
-                System.out.println("\n****************************\n");
-                System.out.println("Pattern = " + pattern.substring(pattern.length()-i-j+decalage, pattern.length()-j));
-                System.out.println("Suffix =  " + currentSuffix + "\n-----------------------\n");
-                System.out.println(pattern.charAt(pattern.length()-i-j-1+decalage));
-                System.out.println(notChar + "\n-----------------------\n");
-*/
-                //System.out.println(j);
+                /**
+                 * The big if is here. We test if the currentSuffix equals the part of the pattern that we are testing
+                 * and it's followed by testing if i and the p.length are equal, in this case, it means that the suffix
+                 * is as big as the pattern, there is a else if below which deal with this.
+                 * The last part test if the "not this character" is actually not the same character as the one in the
+                 * pattern.
+                 */
+                if ((pattern.substring(pattern.length() - i - j + decalage, pattern.length() - j).equals(currentSuffix))
+                        && (pattern.length() - i != 0)
+                        && (pattern.charAt(pattern.length() - i - j - 1 + decalage) != notChar)) {
 
-                if ((pattern.substring(pattern.length()-i-j+decalage, pattern.length()-j).equals(currentSuffix)) && (pattern.length()-i != 0) && (pattern.charAt(pattern.length()-i-j-1+decalage) != notChar)) {
-                    array2[i-1] = j;
+                    /**
+                     * j is the gap to shift in the text recognition to shift when the pattern detects an error.
+                     */
+                    array2[i - 1] = j;
+
+                    /**
+                     * At the moment when we found the good gap, we stop the loop, to not detect another incorrect gap
+                     */
                     break;
-                } else if (j == pattern.length()-1) {
-                    array2[i-1] = pattern.length();
-                } else if ((pattern.length()-i == 0) && (pattern.substring(pattern.length()-i-j+decalage, pattern.length()-j).equals(currentSuffix))) {
-                    array2[i-1] = j;
+
+                    /**
+                     * In this case, we didn't find any recognition between the pattern and any suffix, so we put the
+                     * p.length as the gap in the array.
+                     */
+                } else if (j == pattern.length() - 1) {
+                    array2[i - 1] = pattern.length();
+
+                    /**
+                     * This is the part where we deal with the case where the suffix is the pattern, and there isn't a
+                     * "notChar" for the suffix.
+                     */
+                } else if ((pattern.length() - i == 0) &&
+                        (pattern.substring(pattern.length() - i - j + decalage, pattern.length() - j)
+                                .equals(currentSuffix))) {
+                    array2[i - 1] = j;
                     break;
                 }
             }
+
+            /**
+             * Reinitialize the shift for the next suffix
+             */
             decalage = 0;
 
+            /**
+             * Going in the next suffix.
+             */
             i++;
-            //System.out.println(i);
         }
     }
 
     @Override
     public String toString() {
 
-        String array2S = new String("Array 2 : \n");
+        String array2S = "Array 2 :";
 
         for (int i = 0; i < array2.length; i++) {
             array2S += i + " : " + array2[i] + "\n";
