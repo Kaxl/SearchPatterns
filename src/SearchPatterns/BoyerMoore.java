@@ -50,6 +50,7 @@ public class BoyerMoore {
 
     private String pattern;
     private HashMap<Character, Integer> array1;
+    private int[] array2;
 
     /**
      * Default constructor.
@@ -64,8 +65,9 @@ public class BoyerMoore {
      * Load the pattern.
      */
     public BoyerMoore(String pattern) {
-        this.pattern = new String(pattern);
+        this.pattern = pattern;
         this.array1 = new HashMap<Character, Integer>();
+        this.array2 = new int[pattern.length()];
     }
 
     /**
@@ -106,22 +108,78 @@ public class BoyerMoore {
      * Generate the second array following the pattern (as you can read in the description above)
      */
     public void generateSuffixTable () {
+        int i = 1;
 
+        String currentSuffix;
+        char notChar;
+        int decalage = 0;
+
+        while (i <= pattern.length()) {
+            currentSuffix = pattern.substring(pattern.length() - i, pattern.length());
+            if (pattern.length()-i == 0)
+                notChar = 0;
+            else
+                notChar = pattern.charAt(pattern.length()-i-1);
+
+            for (int j = 1; j < pattern.length(); j++) {
+                if (pattern.length()-i-j-1 < 0) {
+                    currentSuffix = currentSuffix.substring(1, currentSuffix.length());
+                    decalage++;
+
+                    if (currentSuffix.length() > 0)
+                        notChar = currentSuffix.charAt(0);
+                }
+                /*
+
+                System.out.println("\n****************************\n");
+                System.out.println("Pattern = " + pattern.substring(pattern.length()-i-j+decalage, pattern.length()-j));
+                System.out.println("Suffix =  " + currentSuffix + "\n-----------------------\n");
+                System.out.println(pattern.charAt(pattern.length()-i-j-1+decalage));
+                System.out.println(notChar + "\n-----------------------\n");
+*/
+                //System.out.println(j);
+
+                if ((pattern.substring(pattern.length()-i-j+decalage, pattern.length()-j).equals(currentSuffix)) && (pattern.length()-i != 0) && (pattern.charAt(pattern.length()-i-j-1+decalage) != notChar)) {
+                    array2[i-1] = j;
+                    break;
+                } else if (j == pattern.length()-1) {
+                    array2[i-1] = pattern.length();
+                } else if ((pattern.length()-i == 0) && (pattern.substring(pattern.length()-i-j+decalage, pattern.length()-j).equals(currentSuffix))) {
+                    array2[i-1] = j;
+                    break;
+                }
+            }
+            decalage = 0;
+
+            i++;
+            //System.out.println(i);
+        }
     }
 
     @Override
     public String toString() {
+
+        String array2S = new String("Array 2 : \n");
+
+        for (int i = 0; i < array2.length; i++) {
+            array2S += i + " : " + array2[i] + "\n";
+        }
+
         return "BoyerMoore{" +
                 "pattern='" + pattern + '\'' +
                 ", array1=" + array1 +
+                ", array2=" + array2S +
                 '}';
     }
 
     public static void main(String[] args) {
-        BoyerMoore bm = new BoyerMoore("ANPANMAN");
+        //BoyerMoore bm = new BoyerMoore("ANPANMAN");
+        BoyerMoore bm = new BoyerMoore("ABABABA");
 
         // System.out.format("%d", (int) Character.MAX_VALUE);
         bm.generateCharTable();
+        bm.generateSuffixTable();
+
         System.out.println("bm = " + bm);
     }
 
