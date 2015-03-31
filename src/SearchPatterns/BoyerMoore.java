@@ -1,5 +1,7 @@
 package SearchPatterns;
 
+import Utilities.Reader;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,14 +16,14 @@ import java.util.HashMap;
  * <p/>
  * For the pattern "ANPANMAN" the two arrays are the following :
  * <p/>
- * Array1 = charTable =
+ * charTable =
  * +----------------------------------+
  * | letter || A | N | P | M | others |
  * +----------------------------------+
  * |   gap  || 1 | 0 | 5 | 2 |    8   |
  * +----------------------------------+
  * <p/>
- * Array2 = offsetTable =
+ * suffixTable =
  * +---------------------------+
  * | Part of the pattern | gap |
  * +---------------------------+
@@ -49,8 +51,8 @@ import java.util.HashMap;
 public class BoyerMoore {
 
     private String pattern;
-    private HashMap<Character, Integer> array1;
-    private int[] array2;
+    private HashMap<Character, Integer> charTable;
+    private int[] suffixTable;
 
     /**
      * Default constructor.
@@ -66,8 +68,14 @@ public class BoyerMoore {
      */
     public BoyerMoore(String pattern) {
         this.pattern = pattern;
-        this.array1 = new HashMap<Character, Integer>();
-        this.array2 = new int[pattern.length()];
+        this.charTable = new HashMap<Character, Integer>();
+        this.suffixTable = new int[pattern.length()];
+
+        /**
+         * Generate the two arrays.
+         */
+        generateSuffixTable();
+        generateCharTable();
     }
 
     /**
@@ -79,14 +87,16 @@ public class BoyerMoore {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+        generateCharTable();
+        generateSuffixTable();
     }
 
-    public HashMap<Character, Integer> getArray1() {
-        return array1;
+    public HashMap<Character, Integer> getcharTable() {
+        return charTable;
     }
 
-    public void setArray1(HashMap<Character, Integer> array1) {
-        this.array1 = array1;
+    public void setcharTable(HashMap<Character, Integer> charTable) {
+        this.charTable = charTable;
     }
 
     /**
@@ -96,10 +106,12 @@ public class BoyerMoore {
 
         int lastCharPos = pattern.length() - 1;
 
-        // Navigate through the pattern to find the last position of the character and define the gap
+        /**
+         * Navigate through the pattern to find the last position of the character and define the gap.
+         */
         for (int i = lastCharPos; i >= 0; i--) {
-            if (!array1.containsKey(pattern.charAt(i)))
-                array1.put(pattern.charAt(i), lastCharPos - i);
+            if (!charTable.containsKey(pattern.charAt(i)))
+                charTable.put(pattern.charAt(i), lastCharPos - i);
 
         }
     }
@@ -109,28 +121,28 @@ public class BoyerMoore {
      */
     public void generateSuffixTable() {
         /**
-         * we start at 1 to not begin the last character at pattern.length, the position of the last character is
+         * We start at 1 to not begin the last character at pattern.length, the position of the last character is
          * pattern.length - 1
          */
         int i = 1;
 
         String currentSuffix;
         char notChar;
-        int decalage = 0;
+        int shift = 0;
 
         /**
-         * we have to manage the case where we are on the first character, the character at index 0 (p.length - i)
+         * We have to manage the case where we are on the first character, the character at index 0 (p.length - i)
          */
         while (i <= pattern.length()) {
 
             /**
-             * we take the suffix that we are managing, depending on i, we begin with one character for the suffix,
+             * We take the suffix that we are managing, depending on i, we begin with one character for the suffix,
              * and add one character at each i loop
              */
             currentSuffix = pattern.substring(pattern.length() - i, pattern.length());
 
             /**
-             * if the p.length and i have the same values, the program is going to try to look on the notChar at
+             * If the p.length and i have the same values, the program is going to try to look on the notChar at
              * the position -1 of the pattern, which is going to end with an exception outOfBounds
              */
             if (pattern.length() - i == 0)
@@ -149,12 +161,12 @@ public class BoyerMoore {
             for (int j = 1; j < pattern.length(); j++) {
 
                 /**
-                 * If we are going to leave the String (by going into negatives index), we add a "decalage"
-                 * which is a shift to avoid the exceptions out of bounds.
+                 * If we are going to leave the String (by going into negatives index), we add a shift to avoid
+                 * the exceptions out of bounds.
                  */
                 if (pattern.length() - i - j - 1 < 0) {
                     currentSuffix = currentSuffix.substring(1, currentSuffix.length());
-                    decalage++;
+                    shift++;
 
                     /**
                      * For the case where the suffix has a null length, we keep the last notChar
@@ -170,14 +182,14 @@ public class BoyerMoore {
                  * The last part test if the "not this character" is actually not the same character as the one in the
                  * pattern.
                  */
-                if ((pattern.substring(pattern.length() - i - j + decalage, pattern.length() - j).equals(currentSuffix))
+                if ((pattern.substring(pattern.length() - i - j + shift, pattern.length() - j).equals(currentSuffix))
                         && (pattern.length() - i != 0)
-                        && (pattern.charAt(pattern.length() - i - j - 1 + decalage) != notChar)) {
+                        && (pattern.charAt(pattern.length() - i - j - 1 + shift) != notChar)) {
 
                     /**
                      * j is the gap to shift in the text recognition to shift when the pattern detects an error.
                      */
-                    array2[i - 1] = j;
+                    suffixTable[i - 1] = j;
 
                     /**
                      * At the moment when we found the good gap, we stop the loop, to not detect another incorrect gap
@@ -189,16 +201,16 @@ public class BoyerMoore {
                      * p.length as the gap in the array.
                      */
                 } else if (j == pattern.length() - 1) {
-                    array2[i - 1] = pattern.length();
+                    suffixTable[i - 1] = pattern.length();
 
                     /**
                      * This is the part where we deal with the case where the suffix is the pattern, and there isn't a
                      * "notChar" for the suffix.
                      */
                 } else if ((pattern.length() - i == 0) &&
-                        (pattern.substring(pattern.length() - i - j + decalage, pattern.length() - j)
+                        (pattern.substring(pattern.length() - i - j + shift, pattern.length() - j)
                                 .equals(currentSuffix))) {
-                    array2[i - 1] = j;
+                    suffixTable[i - 1] = j;
                     break;
                 }
             }
@@ -206,7 +218,7 @@ public class BoyerMoore {
             /**
              * Reinitialize the shift for the next suffix
              */
-            decalage = 0;
+            shift = 0;
 
             /**
              * Going in the next suffix.
@@ -215,29 +227,70 @@ public class BoyerMoore {
         }
     }
 
+    /**
+     * Update the pattern, load the two arrays and calls the search method with all the algorithm inside.
+     * @param filename File to load.
+     * @param pattern The pattern chose by the user.
+     * @return The list who contains the number of occurrence of the pattern in the file and the location of these
+     * occurrences.
+     */
+    public ArrayList<Integer> search (String filename, String pattern) {
+        setPattern(pattern);
+        return search(filename);
+    }
+
+    /**
+     * Load the file which contains the text and analyze the text with the pattern to find the occurrences.
+     * @param filename File to load.
+     * @return The list who contains the number of occurrence of the pattern in the file and the location of these
+     * occurrences.
+     */
+    public ArrayList<Integer> search (String filename) {
+        ArrayList<Integer> results = new ArrayList<Integer>();
+
+        /**
+         * Load the file
+         */
+        StringBuffer textSB = Reader.read(filename);
+        String text = textSB.toString();
+
+        int i = 0;
+        int pos;
+
+        int n = text.length();
+        int m = pattern.length();
+
+        // TODO Implement the algorithm Boyer-Moore following the documentation.
+        while (i <= n - m ) {
+            pos = m - 1;
+            while (pattern.charAt(pos) == text.charAt(i+pos)) {
+
+            }
+        }
+
+        System.out.println("text = " + text);
+
+        return results;
+    }
+
     @Override
     public String toString() {
 
-        String array2S = "Array 2 :";
+        String suffixTableS = "Array 2 :\n";
 
-        for (int i = 0; i < array2.length; i++) {
-            array2S += i + " : " + array2[i] + "\n";
+        for (int i = 0; i < suffixTable.length; i++) {
+            suffixTableS += i + " : " + suffixTable[i] + "\n";
         }
 
         return "BoyerMoore{" +
                 "pattern='" + pattern + '\'' +
-                ", array1=" + array1 +
-                ", array2=" + array2S +
+                ", charTable=" + charTable +
+                ", suffixTable=" + suffixTableS +
                 '}';
     }
 
     public static void main(String[] args) {
-        //BoyerMoore bm = new BoyerMoore("ANPANMAN");
-        BoyerMoore bm = new BoyerMoore("ABABABA");
-
-        // System.out.format("%d", (int) Character.MAX_VALUE);
-        bm.generateCharTable();
-        bm.generateSuffixTable();
+        BoyerMoore bm = new BoyerMoore("ANPANMAN");
 
         System.out.println("bm = " + bm);
     }
