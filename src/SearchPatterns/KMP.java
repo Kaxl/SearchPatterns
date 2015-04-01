@@ -32,8 +32,8 @@ public class KMP {
      * Default constructor.
      */
     public KMP() {
-        this.overlapChar = new ArrayList<Character>();
-        this.overlapValue = new ArrayList<Integer>();
+        this.overlapChar = new ArrayList<>();
+        this.overlapValue = new ArrayList<>();
     }
 
     /**
@@ -95,7 +95,7 @@ public class KMP {
      * @return          An array containing the positions of appearances.
      */
     public ArrayList<Integer> search(String pattern, String filename) {
-        ArrayList<Integer> output = new ArrayList<Integer>();
+        ArrayList<Integer> output = new ArrayList<>();
 
         // Reload the pattern.
         this.loadPattern(pattern);
@@ -139,7 +139,6 @@ public class KMP {
     @Override
     public String toString() {
         String s = "Overlap array : \n";
-        // Index
         s += "|";
         for (int i = 0; i < this.overlapChar.size(); i++) {
             s += i + "|";
