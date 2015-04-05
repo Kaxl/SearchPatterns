@@ -60,22 +60,32 @@ public class FSM {
                 this.alphabet.add(c);
             }
         }
-        this.stateValues = new int[pattern.length()][this.alphabet.size()];
+        this.stateValues = new int[pattern.length() + 1][this.alphabet.size()];
 
         // Calculate the values of the automaton.
-        for (int i = 0; i < pattern.length(); i++) {
+        for (int i = 0; i < pattern.length() + 1; i++) {
             for (int j = 0; j < this.alphabet.size(); j++) {
                 // If matches, go to the next state.
-                if (this.alphabet.get(j).equals(pattern.charAt(i))) {
+                if (i != pattern.length() && this.alphabet.get(j).equals(pattern.charAt(i))) {
                     this.stateValues[i][j] = i + 1;
                 }
                 else {
                     // Construction of the current pattern (position 0 to current state (i)).
                     String subPattern = pattern.substring(0, i);
                     subPattern += this.alphabet.get(j);
+                    int iPattern = i;
+                    // Last state is different.
+                    // At the end of a pattern, we need to check if letters of pattern found is part
+                    // of a second patter. (For example, a second pattern could begin in the middle of the
+                    // first pattern found.)
+                    if (i == pattern.length()) {
+                        // Remove the first character (to have as many characters as the pattern).
+                        subPattern = subPattern.substring(1);
+                        iPattern = i - 1;   // Minus 1 because there are more states than pattern's length.
+                    }
                     // Shift to the left.
-                    for (int k = 0; k <= i; k++) {
-                        if (subPattern.substring(k, subPattern.length()).equals(pattern.substring(0, i - k + 1))) {
+                    for (int k = 0; k <= pattern.length() - 1; k++) {
+                        if (subPattern.substring(k, subPattern.length()).equals(pattern.substring(0, iPattern - k + 1))) {
                             this.stateValues[i][j] = subPattern.length() - k;   // Attribution of the state and exit the loop.
                             break;
                         }
@@ -102,6 +112,18 @@ public class FSM {
 
         // Load the file into a StringBuffer.
         StringBuffer text = Reader.read(filename);
+
+        // Start at state 0.
+        int state = 0;
+
+        for (int i = 0; i < text.length() - 1; i++) {
+            state = this.stateValues[state][this.alphabet.indexOf(text.charAt(i))];
+            // If match, put the position into the ouput array.
+            if (state == pattern.length()) {
+                // Minus 1 for the length and minus 0 because text start at 0.
+                output.add(i - (pattern.length() - 2));
+            }
+        }
 
         return output;
     }
@@ -137,12 +159,12 @@ public class FSM {
         System.out.println("fsm = " + fsm);
 
         // Search
-        //ArrayList<Integer> output = fsm.search("ababaca", "kmpTest.txt");
+        ArrayList<Integer> output = fsm.search("ababaca", "fsmTest.txt");
 
-        //for (Integer v : output) {
-        //    System.out.println("v = " + v);
-        //}
+        for (Integer v : output) {
+            System.out.println("v = " + v);
+        }
 
-        //System.out.println("kmp = " + kmp);
+        System.out.println("fsm = " + fsm);
     }
 }

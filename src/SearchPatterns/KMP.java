@@ -124,7 +124,8 @@ public class KMP {
             //}
             // If match, put the position in the output array.
             if (j == this.overlapChar.size()) {
-                output.add(i - (this.overlapChar.size() - 1)); // Return the position of the first character.
+                // Minus 1 for the length and minus 1 because character in text start at 0.
+                output.add(i - (this.overlapChar.size() - 2)); // Return the position of the first character.
                 j = this.overlapValue.get(j - 1); // Re-starting position.
             }
         }
