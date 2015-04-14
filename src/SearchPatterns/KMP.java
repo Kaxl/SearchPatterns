@@ -1,6 +1,6 @@
 package SearchPatterns;
 
-import Utilities.Reader;
+import Utilities.Toolbox;
 
 import java.util.ArrayList;
 
@@ -24,9 +24,6 @@ public class KMP {
     // Overlap array.
     private ArrayList<Character> overlapChar;   // Character.
     private ArrayList<Integer> overlapValue;    // Matching value.
-    // Result array.
-    private ArrayList<Integer> result;          // Position in the text.
-
 
     /**
      * Default constructor.
@@ -101,7 +98,7 @@ public class KMP {
         this.loadPattern(pattern);
 
         // Load the file into a StringBuffer.
-        StringBuffer text = Reader.read(filename);
+        StringBuffer text = Toolbox.read(filename);
 
         int j = 0;
         // We don't need to look for the last characters (when there is less characters left than the size of the pattern).
@@ -124,8 +121,8 @@ public class KMP {
             //}
             // If match, put the position in the output array.
             if (j == this.overlapChar.size()) {
-                // Minus 1 for the length and minus 1 because character in text start at 0.
-                output.add(i - (this.overlapChar.size() - 2)); // Return the position of the first character.
+                // Minus 1 for the length.
+                output.add(i - (this.overlapChar.size() - 1)); // Return the position of the first character.
                 j = this.overlapValue.get(j - 1); // Re-starting position.
             }
         }
@@ -133,9 +130,21 @@ public class KMP {
     }
 
     /**
+     * Print the overlap values of the table of prefixes.
+     */
+    public void printOverlap() {
+        String s = "";
+        // Values
+        for (Integer v : this.overlapValue) {
+            s += v + " ";
+        }
+        System.out.println(s);
+    }
+
+    /**
      * Method to print the content of the overload array.
      *
-     * @return  The string representation.
+     * @return The string representation.
      */
     @Override
     public String toString() {
@@ -174,5 +183,6 @@ public class KMP {
         }
 
         System.out.println("kmp = " + kmp);
+        Toolbox.printOutput(kmp.search("ababaca", "kmpTest.txt"));
     }
 }
