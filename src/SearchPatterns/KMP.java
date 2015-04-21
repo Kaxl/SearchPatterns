@@ -101,8 +101,9 @@ public class KMP {
         StringBuffer text = Toolbox.read(filename);
 
         int j = 0;
-        // We don't need to look for the last characters (when there is less characters left than the size of the pattern).
-        for (int i = 0; i < text.length() - (this.overlapChar.size() - 1); i++) {
+
+        // We need to look for the last characters, else, a word at the end of a text will not be detected.
+        for (int i = 0; i < text.length(); i++) {
             // Find starting position in overload arrays.
             while (j > 0 && this.overlapChar.get(j) != text.charAt(i)) {
                 j = this.overlapValue.get(j - 1);
@@ -111,14 +112,6 @@ public class KMP {
             if (text.charAt(i) == this.overlapChar.get(j)) {
                 j++;
             }
-            // TODO : Ok, current version works, but why does this code below doesn't ???
-            // Else, look for re-starting position of pattern.
-            //else {
-            //    if (j > 0)
-            //        j = this.overlapValue.get(j - 1);
-            //    else
-            //        j = 0;
-            //}
             // If match, put the position in the output array.
             if (j == this.overlapChar.size()) {
                 // Minus 1 for the length.
@@ -169,20 +162,15 @@ public class KMP {
     }
 
     public static void main(String[] args) {
-        //KMP kmp = new KMP("ababaca");
-        KMP kmp = new KMP("attataca");
+        String pattern = "ababaca";
+        String filename = "TestFile.txt";
+        KMP kmp = new KMP(pattern);
 
-        System.out.println("kmp = " + kmp);
-        // Overload array seems OK.
-
-        // Search
-        ArrayList<Integer> output = kmp.search("ababaca", "kmpTest.txt");
-
-        for (Integer v : output) {
-            System.out.println("v = " + v);
-        }
-
-        System.out.println("kmp = " + kmp);
-        Toolbox.printOutput(kmp.search("ababaca", "kmpTest.txt"));
+        kmp.printOverlap();
+        System.out.println("KMP - Programme");
+        Toolbox.printOutput(kmp.search(pattern, filename));
+        System.out.println();
+        System.out.println("KMP - TEST with Java methods");
+        Toolbox.printPositionTest(pattern, filename);
     }
 }

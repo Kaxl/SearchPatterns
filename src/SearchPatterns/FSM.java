@@ -1,6 +1,6 @@
 package SearchPatterns;
 
-import Utilities.Reader;
+import Utilities.Toolbox;
 
 import java.util.ArrayList;
 
@@ -111,21 +111,41 @@ public class FSM {
         this.loadPattern(pattern);
 
         // Load the file into a StringBuffer.
-        StringBuffer text = Reader.read(filename);
+        StringBuffer text = Toolbox.read(filename);
 
         // Start at state 0.
         int state = 0;
 
         for (int i = 0; i < text.length() - 1; i++) {
-            state = this.stateValues[state][this.alphabet.indexOf(text.charAt(i))];
-            // If match, put the position into the ouput array.
-            if (state == pattern.length()) {
-                // Minus 1 for the length and minus 0 because text start at 0.
-                output.add(i - (pattern.length() - 2));
+            // If the character is not in the alphabet of the pattern, we skip it.
+            if (this.alphabet.indexOf(text.charAt(i)) != -1) {
+                state = this.stateValues[state][this.alphabet.indexOf(text.charAt(i))];
+                // If match, put the position into the ouput array.
+                if (state == pattern.length()) {
+                    // Minus 1 for the length.
+                    output.add(i - (pattern.length() - 1));
+                }
             }
         }
 
         return output;
+    }
+
+    /**
+     * Print the states of the automaton as wanted for the output.
+     * Letter (header of array) is not printed.
+     */
+    public void printState() {
+        String s = "";
+        // State values
+        for (int i = 0; i < this.stateValues.length; i++) {
+            s += " ";
+            for (int j = 0; j < this.stateValues[i].length; j++) {
+                s += this.stateValues[i][j] + " ";
+            }
+            s += "\n";
+        }
+        System.out.println(s);
     }
 
     /**
@@ -154,17 +174,14 @@ public class FSM {
     }
 
     public static void main(String[] args) {
-        FSM fsm = new FSM("ababaca");
+        String pattern = "ababaca";
+        String filename = "TestFile.txt";
+        FSM fsm = new FSM(pattern);
 
-        System.out.println("fsm = " + fsm);
-
-        // Search
-        ArrayList<Integer> output = fsm.search("ababaca", "fsmTest.txt");
-
-        for (Integer v : output) {
-            System.out.println("v = " + v);
-        }
-
-        System.out.println("fsm = " + fsm);
+        System.out.println("FSM - Programme");
+        Toolbox.printOutput(fsm.search(pattern, filename));
+        System.out.println();
+        System.out.println("FSM - TEST with Java methods");
+        Toolbox.printPositionTest(pattern, filename);
     }
 }
