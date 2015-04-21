@@ -254,18 +254,53 @@ public class BoyerMoore {
         StringBuffer textSB = Reader.read(filename);
         String text = textSB.toString();
 
-        int i = 0;
-        int pos;
+        int pos_text;
+        int pos_motif;
 
-        int n = text.length();
-        int m = pattern.length();
+        int len_t = text.length();
+        int len_m = pattern.length();
 
-        // TODO Implement the algorithm Boyer-Moore following the documentation.
-        while (i <= n - m ) {
-            pos = m - 1;
-            while (pattern.charAt(pos) == text.charAt(i+pos)) {
+        /**
+         * Place the cursor at the text index corresponding to the pattern size
+         */
+        pos_text = len_m;
 
+        /**
+         * while we are not reaching the end the text
+         */
+        while (pos_text <= len_t) {
+
+            /**
+             * Place the cursor at the pattern index corresponding to the pattern size
+             */
+            pos_motif = len_m-1;
+
+            /**
+             * We continue the loop while there is a match between the pattern and the text
+             */
+            while (pos_motif > 0 && text.charAt(pos_text-len_m+pos_motif) == pattern.charAt(pos_motif)) {
+                pos_motif--; // go back from one position
             }
+
+            /**
+             * We found an occurrence of the pattern in the text
+             */
+            if (pos_motif == 0) {
+                results.add(pos_text-len_m);
+            }
+
+            /**
+             * We haven't found the pattern so we have to decide the gap to do
+             */
+            if (pos_motif == len_m-1) {
+                if (charTable.containsKey(text.charAt(pos_text-1)))
+                    pos_text = pos_text + charTable.get(text.charAt(pos_text-1));
+                else
+                    pos_text = pos_text + len_m;
+            } else {
+                pos_text = pos_text + suffixTable[len_m-2-pos_motif];
+            }
+
         }
 
         System.out.println("text = " + text);
@@ -290,7 +325,11 @@ public class BoyerMoore {
     }
 
     public static void main(String[] args) {
-        BoyerMoore bm = new BoyerMoore("ANPANMAN");
+        BoyerMoore bm = new BoyerMoore("anpanman");
+        ArrayList<Integer> results = bm.search("bmTest.txt");
+
+        System.out.println("results = " + results);
+
 
         System.out.println("bm = " + bm);
     }
