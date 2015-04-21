@@ -53,7 +53,7 @@ public class FSM {
      * @param pattern The pattern to load.
      */
     public void loadPattern(String pattern) {
-        this.alphabet = new ArrayList<>();
+        this.alphabet = new ArrayList<Character>();
         // Put each different character of pattern into the alphabet.
         for (Character c : pattern.toCharArray()) {
             if (!this.alphabet.contains(c)) {
@@ -105,7 +105,7 @@ public class FSM {
      * @return          An array containing the positions of appearances.
      */
     public ArrayList<Integer> search(String pattern, String filename) {
-        ArrayList<Integer> output = new ArrayList<>();
+        ArrayList<Integer> output = new ArrayList<Integer>();
 
         // Reload the pattern.
         this.loadPattern(pattern);

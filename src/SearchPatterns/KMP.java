@@ -29,8 +29,8 @@ public class KMP {
      * Default constructor.
      */
     public KMP() {
-        this.overlapChar = new ArrayList<>();
-        this.overlapValue = new ArrayList<>();
+        this.overlapChar = new ArrayList<Character>();
+        this.overlapValue = new ArrayList<Integer>();
     }
 
     /**
@@ -92,7 +92,7 @@ public class KMP {
      * @return          An array containing the positions of appearances.
      */
     public ArrayList<Integer> search(String pattern, String filename) {
-        ArrayList<Integer> output = new ArrayList<>();
+        ArrayList<Integer> output = new ArrayList<Integer>();
 
         // Reload the pattern.
         this.loadPattern(pattern);

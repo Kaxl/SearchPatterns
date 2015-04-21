@@ -325,13 +325,16 @@ public class BoyerMoore {
     }
 
     public static void main(String[] args) {
-        BoyerMoore bm = new BoyerMoore("anpanman");
-        ArrayList<Integer> results = bm.search("bmTest.txt");
+        String pattern = "ababaca";
+        String filename = "TestFile.txt";
+        BoyerMoore bm = new BoyerMoore(pattern);
 
-        System.out.println("results = " + results);
-
-
-        System.out.println("bm = " + bm);
+        //bm.printOverlap();
+        System.out.println("Boyer Moore - Programme");
+        Toolbox.printOutput(bm.search(filename));
+        System.out.println();
+        System.out.println("Boyer Moore - TEST with Java methods");
+        Toolbox.printPositionTest(pattern, filename);
     }
 
 }
