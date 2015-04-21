@@ -1,0 +1,20 @@
+ababaca
+
+Pattern : ababaca
+
+bacbabababacababacaabcbababacababacaaaa
+
+Cas testé :
+
+    - Début du texte.
+
+    - Milieu du texte.
+
+    - Le début d'un occurence est la fin d'une autre occurence.
+
+    - Fin du texte.
+
+Vérification visuelle avec la méthode : 'printPositionTest' qui vérifie les positions avec
+la méthode indexOf() de Java.
+
+ababaca
