@@ -1,6 +1,6 @@
 package SearchPatterns;
 
-import Utilities.Reader;
+import Utilities.Toolbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -251,7 +251,7 @@ public class BoyerMoore {
         /**
          * Load the file
          */
-        StringBuffer textSB = Reader.read(filename);
+        StringBuffer textSB = Toolbox.read(filename);
         String text = textSB.toString();
 
         int pos_text;
