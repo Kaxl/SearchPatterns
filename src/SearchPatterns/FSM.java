@@ -47,7 +47,7 @@ public class FSM {
      * Calculation of the next state depending
      * on the current letter of alphabet being process.
      *
-     * If character doesn't match, we shift the current patern
+     * If character doesn't match, we shift the current pattern
      * to the left until it matches to find the right state.
      *
      * @param pattern The pattern to load.
