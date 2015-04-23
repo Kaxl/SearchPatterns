@@ -42,7 +42,7 @@ import java.util.HashMap;
  * |     NOT(A)NPANMAN   |  6  |
  * +---------------------------+
  * <p/>
- * With these two arrays, we are able to the Boyer-Moore Algorithm.
+ * With these two arrays, we are able to do the Boyer-Moore Algorithm.
  *
  * @author Höhn Rudolf
  * @version 0.1
