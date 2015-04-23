@@ -1,5 +1,6 @@
 import SearchPatterns.FSM;
 import SearchPatterns.KMP;
+import SearchPatterns.RabinKarp;
 import Utilities.Toolbox;
 
 import javax.tools.Tool;
@@ -29,15 +30,15 @@ public class Main {
         // Rien d'autre ne doit etre affiche que ce qui est indique ci-dessous
         switch (algo) {
             case 1: //Rabin-Karp
+                RabinKarp rk = new RabinKarp(motif);
                 // Format de sortie -> à générer avec votre code
                 if (fileName == null) {
                     // Afficher la base, le nombre 1er pour le modulo, le hash du motif
-                    System.out.println("26 37 18");
+                    rk.printState();
                 } else {
                     // Afficher le nombre d'occurences du motif
                     // suivi de la liste des positions de sa 1ere lettre dans le texte
-                    System.out.println("13"); // nombre d'occurences du motifs
-                    System.out.println("0 3 46 67 109"); //liste des positions du motif
+                    Toolbox.printOutput(rk.search(motif, fileName));
                 }
                 break;
             case 2: //Automate fini

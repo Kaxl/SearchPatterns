@@ -12,29 +12,29 @@ import java.util.ArrayList;
  *
  * @author Höhn Rudolf
  * @version 0.1
- * @date 27.03.2015
+ * @date 23.04.2015
  */
 public class RabinKarp {
 
     private String text;
     private String pattern;
     private int hashPattern;
+    private int q = 3355439; // q-1 is the biggest hash possible
+    private int d = 256; // size of the alphabet (ascii)
 
     /**
      * Default constructor
      */
     public RabinKarp () {
-        this(null, null);
+        this(null);
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pattern
-     * @param filename File to load
      */
-    public RabinKarp (String pattern, String filename) {
+    public RabinKarp (String pattern) {
         setPattern(pattern);
-        this.text = getTextFromFile(filename);
     }
 
     /**
@@ -77,9 +77,6 @@ public class RabinKarp {
      * @return the hash
      */
     public int hashRabinKarp (String text) {
-        int q = 3355439; // q-1 is the biggest hash possible
-        int d = 256; // size of the alphabet (ascii)
-
         int result = 0;
 
         /**
@@ -93,13 +90,26 @@ public class RabinKarp {
     }
 
     /**
-     * Method which contains the algorithm of Rabin-Karp.
+     * Updates the pattern and search the pattern into the file.
+     * @param pattern New pattern.
+     * @param filename File to load
      * @return An ArrayList<Integer> with the position of every match in the text.
      */
-    public ArrayList<Integer> search () {
+    public ArrayList<Integer> search (String pattern, String filename) {
+        setPattern(pattern);
+        return search(filename);
+    }
+
+    /**
+     * Method which contains the algorithm of Rabin-Karp.
+     * @param filename File to load.
+     * @return An ArrayList<Integer> with the position of every match in the text.
+     */
+    public ArrayList<Integer> search (String filename) {
         /**
          * Initialization
          */
+        text = getTextFromFile(filename);
         int lenText = text.length();
         int lenPattern = pattern.length();
         ArrayList<Integer> results = new ArrayList<Integer>();
@@ -136,13 +146,20 @@ public class RabinKarp {
         return results;
     }
 
+    /**
+     * If the filename is null in the initi
+     */
+    public void printState () {
+        System.out.println(d + " " + q + " " + hashPattern);
+    }
+
     public static void main(String[] args) {
         String pattern = "ababaca";
         String filename = "TestFile.txt";
-        RabinKarp rk = new RabinKarp(pattern, filename);
+        RabinKarp rk = new RabinKarp(pattern);
 
         System.out.println("Rabin Karp - Programme");
-        Toolbox.printOutput(rk.search());
+        Toolbox.printOutput(rk.search(pattern, filename));
         System.out.println();
         System.out.println("Rabin Karp - TEST with Java methods");
         Toolbox.printPositionTest(pattern, filename);
