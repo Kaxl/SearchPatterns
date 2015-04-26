@@ -45,7 +45,7 @@ import java.util.*;
  *
  * @author Höhn Rudolf
  * @version 0.1
- * @date 27.03.2015
+ * @date 26.04.2015
  */
 public class BoyerMoore {
 
