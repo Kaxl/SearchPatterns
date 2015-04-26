@@ -7,6 +7,14 @@ import java.util.ArrayList;
 /**
  * Class to implement the Finite-State Machine (FSM) algorithm.
  *
+ * The automaton contains all states to find an occurrence.
+ * The states depends on whether we have found some characters or not.
+ * Depending on the character, we move to another state.
+ *
+ * If we arrive at the last state, we have found an occurrence.
+ *
+ * With the automaton, we only have to check each characters once.
+ *
  * @author  Axel Fahy
  * @date    31.03.2015
  * @version 0.1
@@ -40,7 +48,6 @@ public class FSM {
      * Alphabet array :
      *
      * Put each different letters of pattern into the alphabet.
-     *
      *
      * State values :
      *
@@ -120,7 +127,7 @@ public class FSM {
             // If the character is not in the alphabet of the pattern, we skip it.
             if (this.alphabet.indexOf(text.charAt(i)) != -1) {
                 state = this.stateValues[state][this.alphabet.indexOf(text.charAt(i))];
-                // If match, put the position into the ouput array.
+                // If match, put the position into the output array.
                 if (state == pattern.length()) {
                     // Minus 1 for the length.
                     output.add(i - (pattern.length() - 1));
