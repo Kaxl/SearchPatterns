@@ -147,7 +147,7 @@ public class RabinKarp {
     }
 
     /**
-     * If the filename is null in the initi
+     * If the filename is null in the initialization.
      */
     public void printState () {
         System.out.println(d + " " + q + " " + hashPattern);

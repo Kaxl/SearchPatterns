@@ -2,8 +2,7 @@ package SearchPatterns;
 
 import Utilities.Toolbox;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Class to implement Boyer-Moore algorithm.
@@ -74,8 +73,8 @@ public class BoyerMoore {
         /**
          * Generate the two arrays.
          */
-        generateSuffixTable();
-        generateCharTable();
+        this.generateSuffixTable();
+        this.generateCharTable();
     }
 
     /**
@@ -112,7 +111,6 @@ public class BoyerMoore {
         for (int i = lastCharPos; i >= 0; i--) {
             if (!charTable.containsKey(pattern.charAt(i)))
                 charTable.put(pattern.charAt(i), lastCharPos - i);
-
         }
     }
 
@@ -171,8 +169,16 @@ public class BoyerMoore {
                     /**
                      * For the case where the suffix has a null length, we keep the last notChar
                      */
-                    if (currentSuffix.length() > 0)
+                    if (currentSuffix.length() > 0) {
                         notChar = currentSuffix.charAt(0);
+                        /**
+                         * If we are processing the last character, we set the not char at 0.
+                         * Else, if the charAt(0) is the same as the last character, it won't match.
+                         */
+                        if (currentSuffix.length() == 1) {
+                            notChar = 0;
+                        }
+                    }
                 }
 
                 /**
@@ -182,8 +188,9 @@ public class BoyerMoore {
                  * The last part test if the "not this character" is actually not the same character as the one in the
                  * pattern.
                  */
-                if ((pattern.substring(pattern.length() - i - j + shift, pattern.length() - j).equals(currentSuffix))
-                        && (pattern.length() - i != 0)
+                String tmpSuffix = pattern.substring(pattern.length() - i - j + shift, pattern.length() - j);
+                if ((tmpSuffix.equals(currentSuffix))
+                        && (pattern.length() - i != 0)//) {
                         && (pattern.charAt(pattern.length() - i - j - 1 + shift) != notChar)) {
 
                     /**
@@ -195,23 +202,23 @@ public class BoyerMoore {
                      * At the moment when we found the good gap, we stop the loop, to not detect another incorrect gap
                      */
                     break;
-
+                }
+                /**
+                 * This is the part where we deal with the case where the suffix is the pattern, and there isn't a
+                 * "notChar" for the suffix.
+                 * We are looking at the last character of the pattern.
+                 */
+                else if ((pattern.length() == i) &&
+                    (tmpSuffix.equals(currentSuffix))) {
+                    suffixTable[i - 1] = j;
+                    break;
+                }
                     /**
                      * In this case, we didn't find any recognition between the pattern and any suffix, so we put the
                      * p.length as the gap in the array.
                      */
-                } else if (j == pattern.length() - 1) {
+                else if (j == pattern.length() - 1) {
                     suffixTable[i - 1] = pattern.length();
-
-                    /**
-                     * This is the part where we deal with the case where the suffix is the pattern, and there isn't a
-                     * "notChar" for the suffix.
-                     */
-                } else if ((pattern.length() - i == 0) &&
-                        (pattern.substring(pattern.length() - i - j + shift, pattern.length() - j)
-                                .equals(currentSuffix))) {
-                    suffixTable[i - 1] = j;
-                    break;
                 }
             }
 
@@ -229,12 +236,12 @@ public class BoyerMoore {
 
     /**
      * Update the pattern, load the two arrays and calls the search method with all the algorithm inside.
-     * @param filename File to load.
      * @param pattern The pattern chose by the user.
+     * @param filename File to load.
      * @return The list who contains the number of occurrence of the pattern in the file and the location of these
      * occurrences.
      */
-    public ArrayList<Integer> search (String filename, String pattern) {
+    public ArrayList<Integer> search (String pattern, String filename) {
         setPattern(pattern);
         return search(filename);
     }
@@ -251,8 +258,7 @@ public class BoyerMoore {
         /**
          * Load the file
          */
-        StringBuffer textSB = Toolbox.read(filename);
-        String text = textSB.toString();
+        StringBuffer text = Toolbox.read(filename);
 
         int pos_text;
         int pos_motif;
@@ -302,10 +308,47 @@ public class BoyerMoore {
             }
 
         }
-
-        System.out.println("text = " + text);
-
         return results;
+    }
+
+    /**
+     * Prints the characters table.
+     * (only the value, not the characters.)
+     * The order must be the same as the pattern.
+     * Search the pattern from the left and print the value (if not already print).
+     * We must do this because an HashMap doesn't keep the order and
+     * by using a LinkedHashMap, the order will be false (see generateCharTable).
+     */
+    public void printCharTable() {
+        String s = "";
+        ArrayList<Integer> values = new ArrayList<Integer>();
+        ArrayList<Character> charDone = new ArrayList<Character>();
+        // Get the values in the right order.
+        for (Character c : this.pattern.toCharArray()) {
+            if (!charDone.contains(c)) {
+                charDone.add(c);
+                values.add(this.charTable.get(c));
+            }
+        }
+        for (Integer v : values) {
+            s += v + " ";
+        }
+        // Add the last element (lenght of pattern).
+        s += this.pattern.length();
+        System.out.println(s);
+    }
+
+    /**
+     * Prints the suffix table.
+     * Starting with the smallest sub-pattern (one character).
+     */
+    public void printSuffixTable() {
+        String s = "";
+        // Values
+        for (Integer v : this.suffixTable) {
+            s += v + " ";
+        }
+        System.out.println(s);
     }
 
     @Override
@@ -325,16 +368,19 @@ public class BoyerMoore {
     }
 
     public static void main(String[] args) {
-        String pattern = "ababaca";
+        //String pattern = "ababaca";
+        String pattern = "anpanman";
         String filename = "TestFile.txt";
         BoyerMoore bm = new BoyerMoore(pattern);
 
-        //bm.printOverlap();
         System.out.println("Boyer Moore - Programme");
         Toolbox.printOutput(bm.search(filename));
         System.out.println();
         System.out.println("Boyer Moore - TEST with Java methods");
         Toolbox.printPositionTest(pattern, filename);
+        System.out.println();
+        bm.printCharTable();
+        bm.printSuffixTable();
     }
 
 }

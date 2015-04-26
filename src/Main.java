@@ -1,11 +1,10 @@
+import SearchPatterns.BoyerMoore;
 import SearchPatterns.FSM;
 import SearchPatterns.KMP;
 import SearchPatterns.RabinKarp;
 import Utilities.Toolbox;
 
-import javax.tools.Tool;
 import java.io.*;
-import java.util.*;
 
 public class Main {
 
@@ -65,23 +64,17 @@ public class Main {
                 }
                 break;
             case 4: //Boyer-Moore
+                BoyerMoore bm = new BoyerMoore(motif);
                 // Format de sortie -> à générer avec votre code
                 if (fileName == null) {
                     //Afficher les deux tableaux des decalages
-                    // P. ex. pour le motif M = "anpanman"
-                    // 1er tableau
-                    //                  a n p m *       lettre (selon ordre dans le motif)
-                    System.out.println("1 0 5 2 8"); // decalage
+                    bm.printCharTable();
                     // 2eme tableau
-                    // partie du motif bonne (depuis la droite):
-                    //            n an man nman anman panman npanman anpanman
-                    // decalage:  8  3  6    6    6      6      6       6
-                    System.out.println("8 3 6 6 6 6 6 6"); // decalage
+                    bm.printSuffixTable();
                 } else {
                     // Afficher le nombre d'occurences du motif
                     // suivi de la liste des positions de sa 1ere lettre dans le texte
-                    System.out.println("13"); // nombre d'occurences du motifs
-                    System.out.println("0 3 46 67 109"); //liste des positions du motif
+                    Toolbox.printOutput(bm.search(motif, fileName));
                 }
                 break;
             default:
